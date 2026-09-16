@@ -29,16 +29,25 @@ def test_remove_ingredient_removes_ingredient():
 
     assert ingredient not in burger.ingredients
 
-def test_move_ingredient_moves_ingredient():
+@pytest.mark.parametrize(
+    'index, new_index, expected_order',
+    [
+        (0, 1, [1, 0, 2]),
+        (2, 0, [2, 0, 1]),
+        (1, 2, [0, 2, 1]),
+    ]
+)
+def test_move_ingredient_moves_ingredient(index, new_index, expected_order):
     burger = Burger()
-    first_ingredient = Mock()
-    second_ingredient = Mock()
-    burger.add_ingredient(first_ingredient)
-    burger.add_ingredient(second_ingredient)
+    ingredients = [Mock(), Mock(), Mock()]
 
-    burger.move_ingredient(0, 1)
+    for ingredient in ingredients:
+        burger.add_ingredient(ingredient)
 
-    assert burger.ingredients == [second_ingredient, first_ingredient]
+    burger.move_ingredient(index, new_index)
+
+    expected = [ingredients[i] for i in expected_order]
+    assert burger.ingredients == expected
 
 def test_get_price_returns_correct_price():
     burger = Burger()
